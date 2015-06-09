@@ -1,4 +1,4 @@
-- name: Install elasticsearch kibana
+- name: Install Docker Registry
   hosts: es
   user: root
   roles:
