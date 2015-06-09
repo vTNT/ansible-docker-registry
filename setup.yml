@@ -1,0 +1,8 @@
+- name: Install elasticsearch kibana
+  hosts: es
+  user: root
+  roles:
+    - registry
+    - "nginx-registry-proxy"
+  vars:
+    storage_path: /data/registry

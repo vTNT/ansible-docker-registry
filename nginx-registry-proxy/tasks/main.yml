@@ -1,0 +1,34 @@
+- name: Install python-passlib for htpasswd ansible module
+  apt: pkg=python-passlib state=present update_cache=true #for htpasswd
+
+- name: Ensure nginx config dir
+  file: path={{ nginx.config_dir_path }} state=directory mode=0755
+
+- name: Make basic auth for nginx
+  htpasswd:
+    path: "{{ nginx.config_dir_path }}/{{ nginx.auth_basic_user_file }}"
+    name: "{{ nginx.username }}"
+    password: "{{ nginx.password }}"
+    owner: root
+    group: root 
+    mode: 0644
+    state: present
+
+- name: stat docker-registry certificate file
+  stat: path={{ nginx.config_dir_path }}/key.pem
+  register: docker_registry_cert_stat
+
+- name: create self-signed SSL cert
+  command: openssl req -x509 -newkey rsa:4086 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN={{ nginx.domain }}" -keyout {{ nginx.config_dir_path}}/key.pem -out {{ nginx.config_dir_path}}/cert.pem -days 3650 -nodes
+  when: not docker_registry_cert_stat.stat.exists
+
+- name: Run nginx-registry-proxy container
+  docker: 
+    name: nginx-registry-proxy
+    image: marvambass/nginx-registry-proxy
+    links:
+    - "registry"
+    ports: "443:443"
+    volumes: 
+    - "{{ nginx.config_dir_path }}:/etc/nginx/external"
+

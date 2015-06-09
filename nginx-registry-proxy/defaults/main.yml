@@ -1,0 +1,7 @@
+---
+nginx:
+    config_dir_path: "/opt/nginx-registry"
+    domain: "my.docker.registry.com"
+    auth_basic_user_file: "registry.htpasswd"
+    username: "admin"
+    password: "admin"

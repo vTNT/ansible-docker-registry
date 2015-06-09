@@ -1,0 +1,21 @@
+# create a directory if it doesn't exist
+---
+- include: install_docker.yml
+
+- name: create registry storage directory
+  file: path={{ storage_path }} state=directory mode=0755
+
+- name: registry
+  docker:
+    name: registry
+    image: registry
+    state: started
+    ports:
+    - "{{ ansible_eth0.ipv4.address }}:5000:5000"
+    volumes:
+    - "{{ storage_path }}:/tmp/registry"
+    env:
+        SETTINGS_FLAVOR: dev
+        STORAGE_PATH: /tmp/registry
+
+ 

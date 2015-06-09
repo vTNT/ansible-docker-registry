@@ -1,0 +1,14 @@
+- name: install pycurl
+  apt: pkg=python-pycurl state=present
+
+- name: install docker apt-key
+  apt_key: url=https://get.docker.io/gpg state=present
+
+- name: enable docker repo
+  apt_repository: repo='deb http://get.docker.io/ubuntu docker main' state=present
+
+- name: install the required packages
+  apt: pkg={{ item }} state=present 
+  with_items: 
+   - lxc-docker
+
