@@ -32,3 +32,10 @@
     volumes: 
     - "{{ nginx.config_dir_path }}:/etc/nginx/external"
 
+- name: registry Automatically Start Containers
+  stat: path=/etc/init/start_registry.conf
+  register: registry_automatically_stat
+
+- name: registry Automatically Start Containers conf
+  template: src=start_registry_container.conf dest="/etc/init/start_registry.conf"
+  when: not registry_automatically_stat.stat.exists
