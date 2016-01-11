@@ -12,6 +12,7 @@
     state: started
     ports:
     - "{{ ansible_eth0.ipv4.address }}:5000:5000"
+    restart_policy: always
     volumes:
     - "{{ storage_path }}:/tmp/registry"
     env:
